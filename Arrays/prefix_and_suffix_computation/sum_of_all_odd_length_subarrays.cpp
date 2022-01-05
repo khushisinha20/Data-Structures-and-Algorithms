@@ -1,4 +1,4 @@
-https://leetcode.com/problems/sum-of-all-odd-length-subarrays/
+//leetcode.com/problems/sum-of-all-odd-length-subarrays/
 
 #include <bits/stdc++.h>
 using namespace std;

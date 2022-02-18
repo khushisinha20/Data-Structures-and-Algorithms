@@ -1,6 +1,8 @@
 //leetcode.com/problems/fraction-to-recurring-decimal
 
 #include <bits/stdc++.h>
+#include <unordered_map>
+#include <utility>
 using namespace std;
 
 class Solution {

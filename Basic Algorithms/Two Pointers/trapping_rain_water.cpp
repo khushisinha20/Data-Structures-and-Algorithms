@@ -1,7 +1,7 @@
 //leetcode.com/problems/trapping-rain-water/
 
 #include <bits/stdc++.h>
-using namepace std;
+using namespace std;
 
 class Solution {
 public:

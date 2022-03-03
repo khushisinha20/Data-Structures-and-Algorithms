@@ -1,6 +1,7 @@
 //leetcode.com/problems/4sum
 
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 class Solution {

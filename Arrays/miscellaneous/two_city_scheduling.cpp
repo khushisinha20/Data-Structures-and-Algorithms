@@ -10,7 +10,7 @@ bool comparator(vector<int>& a, vector<int>& b) {
     
 class Solution {
 public:
-    int twoCitySchedCost(vector<vector<int>>& costs) {
+    int twoCitySchedCost(vector<vector<int> >& costs) {
         sort(costs.begin(), costs.end(), comparator);
         int min_cost = 0;
         for (int i = 0; i < costs.size() / 2; ++i) 

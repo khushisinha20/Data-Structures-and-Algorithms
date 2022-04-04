@@ -6,7 +6,7 @@ using namespace std;
 
 class Solution {
 public:
-    void setZeroes(vector<vector<int>>& matrix) {
+    void setZeroes(vector<vector<int> >& matrix) {
         bool zero_in_first_col = false;
         for (int rows = 0; rows < matrix.size(); ++rows) {
             if (matrix[rows][0] == 0) {

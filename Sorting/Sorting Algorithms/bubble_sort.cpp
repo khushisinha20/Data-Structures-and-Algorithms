@@ -1,6 +1,6 @@
 //Works by repeatedly swapping the adjacent elements if they are in the wrong order
 
-//Time Complexity O(n)
+//Time Complexity O(n ^ 2)
 
 //Space Complexity O(1)
 

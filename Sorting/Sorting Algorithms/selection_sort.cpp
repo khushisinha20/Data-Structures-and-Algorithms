@@ -1,6 +1,6 @@
 //Works by repeatedly finding minimum element from the unsorted part and putting it at the beginning 
 
-//Time Complexity O(n)
+//Time Complexity O(n ^ 2)
 
 //Space Complexity O(1)
 

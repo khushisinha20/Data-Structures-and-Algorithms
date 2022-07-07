@@ -6,33 +6,36 @@ using namespace std;
 class Solution {
 public:
     string repeatLimitedString(string s, int repeatLimit) {
-        vector<int> freq_of_chars(26, 0);
-        for (auto& character: s)
-            ++freq_of_chars[character - 'a'];
-        
         string res = "";
-        int occurence = 0;
-        int previous_size = 0;
-
-        while (res.length() < s.length()) {
+        int repeatOccurence = 0;
+        vector<int> freq(26, 0);
+        int prevsize = -1;
+        for (auto& i: s)
+            ++freq[i - 'a'];
+    
+        while (res.size() < s.size()) {
             for (int i = 25; i >= 0; --i) {
-                if (freq_of_chars[i] == 0)
+                if (freq[i] == 0)
                     continue;
 
-                if (res.back() == (i + 'a') && occurence == repeatLimit)
+                if (res.back() == (i + 'a') && repeatOccurence == repeatLimit)
                     continue;
 
-                occurence = (res.back() == (i + 'a'))? occurence + 1: 1;
-                res.push_back((i + 'a'));
-                --freq_of_chars[i];
+                if (res.back() == (i + 'a'))
+                    ++repeatOccurence;
+                else
+                    repeatOccurence = 1;
+
+                res.push_back(i + 'a');
+                --freq[i];
                 break;
             }
-            
-            if (previous_size == res.length())
+            if (prevsize == res.size()) //to check if no more characters are being added
                 break;
-
-            previous_size = res.length();
+            
+            prevsize = res.size();
         }
+        
         return res;
     }
 };

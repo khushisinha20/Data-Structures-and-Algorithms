@@ -6,6 +6,9 @@
 
 //Quick Select Algorithm
 
+#include <bits/stdc++.h>
+using namespace std;
+
 class Solution {
 public:
     int partition(vector<int>& a, int low, int high) {

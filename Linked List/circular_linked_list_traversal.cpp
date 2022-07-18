@@ -4,10 +4,8 @@ using namespace std;
 struct Node {
     int data;
     Node* next;
-    Node* prev;
     Node(int value) {
         data = value;
-        prev = NULL;
         next = NULL;
     }
 };

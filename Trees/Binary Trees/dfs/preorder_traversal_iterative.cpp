@@ -19,17 +19,21 @@ public:
         if (!root)
             return res;
         
+        TreeNode* curr = root;
         stack<TreeNode*> s;
-        s.push(root);
-        while (!s.empty()) {
-            TreeNode* root = s.top();
+        while (true) {
+            while (curr) {
+                res.push_back(curr -> val);
+                s.push(curr);
+                curr = curr -> left;
+            }
+            if (s.empty())
+                break;
+            curr = s.top();
             s.pop();
-            res.push_back(root -> val);
-            if (root -> right)
-                s.push(root -> right);
-            if (root -> left)
-                s.push(root -> left);
+            curr = curr -> right;
         }
+        
         return res;
     }
 };

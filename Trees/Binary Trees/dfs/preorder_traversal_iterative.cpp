@@ -15,25 +15,22 @@ struct TreeNode {
 class Solution {
 public:
     vector<int> preorderTraversal(TreeNode* root) {
-        vector<int> res;
         if (!root)
-            return res;
+            return {};
+        vector<int> preorder;
+        stack<TreeNode*> nodes;
+        nodes.push(root);
         
-        TreeNode* curr = root;
-        stack<TreeNode*> s;
-        while (true) {
-            while (curr) {
-                res.push_back(curr -> val);
-                s.push(curr);
-                curr = curr -> left;
-            }
-            if (s.empty())
-                break;
-            curr = s.top();
-            s.pop();
-            curr = curr -> right;
+        while (!nodes.empty()) {
+            root = nodes.top();
+            nodes.pop();
+            preorder.push_back(root -> val);
+            if (root -> right)
+                nodes.push(root -> right);
+            if (root -> left)
+                nodes.push(root -> left);
         }
         
-        return res;
+        return preorder;
     }
 };

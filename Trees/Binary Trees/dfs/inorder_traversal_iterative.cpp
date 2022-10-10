@@ -14,21 +14,24 @@ struct TreeNode {
 
 class Solution {
 public:
-    vector<int> inorderTraversal(TreeNode* root) {
+    vector<int> preorderTraversal(TreeNode* root) {
         if (!root)
             return {};
+        TreeNode* curr = root;
         stack<TreeNode*> nodes;
-        vector<int> inorder;
-        while (!nodes.empty() || root) {
-            while (root) {
-                nodes.push(root);
-                root = root -> left;
-            }
-            root = nodes.top();
+        nodes.push(curr);
+        vector<int> preorder;
+        
+        while (!nodes.empty()) {
+            TreeNode* currentRoot = nodes.top();
+            preorder.push_back(currentRoot -> val);
             nodes.pop();
-            inorder.push_back(root -> val);
-            root = root -> right;
+            if (currentRoot -> right)
+                nodes.push(currentRoot -> right);
+            if (currentRoot -> left)
+                nodes.push(currentRoot -> left);
         }
-        return inorder;
+        
+        return preorder;
     }
 };

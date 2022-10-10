@@ -17,18 +17,19 @@ public:
     vector<int> preorderTraversal(TreeNode* root) {
         if (!root)
             return {};
-        vector<int> preorder;
+        TreeNode* curr = root;
         stack<TreeNode*> nodes;
-        nodes.push(root);
+        nodes.push(curr);
+        vector<int> preorder;
         
         while (!nodes.empty()) {
-            root = nodes.top();
+            TreeNode* currentRoot = nodes.top();
+            preorder.push_back(currentRoot -> val);
             nodes.pop();
-            preorder.push_back(root -> val);
-            if (root -> right)
-                nodes.push(root -> right);
-            if (root -> left)
-                nodes.push(root -> left);
+            if (currentRoot -> right)
+                nodes.push(currentRoot -> right);
+            if (currentRoot -> left)
+                nodes.push(currentRoot -> left);
         }
         
         return preorder;

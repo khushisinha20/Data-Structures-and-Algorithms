@@ -14,34 +14,38 @@ struct TreeNode {
 
 class Solution {
 public:
-    int findMax(TreeNode* root) {
-        if (!root -> right)
-            return root -> val;
-        return findMax(root -> right);
+    int getSuccessor(TreeNode* node) {
+        node = node -> right;
+        while (node && node -> left) 
+            node = node -> left;
+        return node -> val;
     }
     
     TreeNode* deleteNode(TreeNode* root, int key) {
-        TreeNode* curr = root;
-        if (!curr)
+        if (!root)
             return nullptr;
         
-        if (curr -> val < key) 
-            curr -> right = deleteNode(curr -> right, key);
-        else if (curr -> val > key)
-            curr -> left = deleteNode(curr -> left, key);
-        else {
-            if (curr -> left && curr -> right) {
-                int left_max = findMax(root -> left);
-                curr -> val = left_max;
-                curr -> left = deleteNode(curr -> left, left_max);
-                return curr;
-            } else if (curr -> left) 
-                return curr -> left;
-             else if (curr -> right) 
-                return curr -> right;
-             else 
-                return nullptr;
+        if (root -> val < key) {
+            root -> right = deleteNode(root -> right, key);
+        } else if (root -> val > key) {
+            root -> left = deleteNode(root -> left, key);
+        } else {
+            if (!root -> left) {
+                TreeNode* temp = root -> right;
+                TreeNode* curr = root;
+                delete curr;
+                return temp;
+            } else if (!root -> right) {
+                TreeNode* temp = root -> left;
+                TreeNode* curr = root;
+                delete curr;
+                return temp;
+            } else {
+                int successor = getSuccessor(root);
+                root -> val = successor;
+                root -> right = deleteNode(root -> right, successor);
+            }
         }
-        return curr;
+        return root;
     }
 };

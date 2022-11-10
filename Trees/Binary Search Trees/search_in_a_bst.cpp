@@ -15,15 +15,13 @@ struct TreeNode {
 class Solution {
 public:
     TreeNode* searchBST(TreeNode* root, int val) {
-        TreeNode* curr = root;
-        while (curr) {
-            if (curr -> val == val)
-                return curr;
-            if (curr -> val < val)
-                curr = curr -> right;
-            else
-                curr = curr -> left;
-        }
-        return nullptr;
+        if (!root)
+            return nullptr;
+        if (root -> val < val)
+            return searchBST(root -> right, val);
+        if (root -> val > val)
+            return searchBST(root -> left, val);
+        
+        return root;
     }
 };

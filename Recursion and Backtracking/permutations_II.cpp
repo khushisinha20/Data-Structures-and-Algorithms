@@ -5,29 +5,27 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> result;
-    
-    void generatePermutation(vector<int>& nums, int index, int n) {
-        if (index == n) {
-            result.push_back(nums);
+    void backtrack(vector<int>& nums, int index, vector<vector<int>>& uniquePermutations) {
+        if (index == nums.size()) {
+            uniquePermutations.push_back(nums);
             return;
         }
         
         unordered_set<int> visited;
         
-        for (int j = index; j <= n; ++j) {
-            if (visited.find(nums[j]) == visited.end()) {
-                swap(nums[index], nums[j]);
-                generatePermutation(nums, index + 1, n);
-                swap(nums[index], nums[j]);
-                visited.insert(nums[j]);
+        for (int i = index; i < nums.size(); ++i) {
+            if (visited.find(nums[i]) == visited.end()) {
+                swap(nums[i], nums[index]);
+                backtrack(nums, index + 1, uniquePermutations);
+                swap(nums[i], nums[index]);
+                visited.insert(nums[i]);
             }
         }
-        
     }
     
     vector<vector<int>> permuteUnique(vector<int>& nums) {
-        generatePermutation(nums, 0, nums.size() - 1);
-        return result;
+        vector<vector<int>> uniquePermutations;
+        backtrack(nums, 0, uniquePermutations);
+        return uniquePermutations;
     }
 };

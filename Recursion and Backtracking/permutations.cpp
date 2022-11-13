@@ -5,24 +5,22 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> result;
-    
-    void generatePermutation(vector<int>& nums, int index, int n) {
-        if (index == n) {
-            result.push_back(nums);
+    void backtrack(vector<int>& nums, int index, vector<vector<int>>& possiblePermutations) {
+        if (index == nums.size()) {
+            possiblePermutations.push_back(nums);
             return;
         }
         
-        for (int j = index; j <= n; ++j) {
-            swap(nums[index], nums[j]);
-            generatePermutation(nums, index + 1, n);
-            swap(nums[index], nums[j]);
+        for (int i = index; i < nums.size(); ++i) {
+            swap(nums[i], nums[index]);
+            backtrack(nums, index + 1, possiblePermutations);
+            swap(nums[i], nums[index]);
         }
-        
     }
     
     vector<vector<int>> permute(vector<int>& nums) {
-        generatePermutation(nums, 0, nums.size() - 1);
-        return result;
+        vector<vector<int>> possiblePermutations;
+        backtrack(nums, 0, possiblePermutations);
+        return possiblePermutations;
     }
 };

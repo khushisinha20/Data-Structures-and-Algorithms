@@ -5,22 +5,22 @@ using namespace std;
 
 class Solution {
 public:
-    void generateSubsets(vector<vector<int>>& result, vector<int>& temp, vector<int>& nums, int start) {
-        if (start >= nums.size()) {
-            result.push_back(temp);
+    void backtrack(vector<int>& nums, int index, vector<vector<int>>& result, vector<int>& currentSubset) {
+        if (index == nums.size()) {
+            result.push_back(currentSubset);
             return;
         }
         
-        temp.push_back(nums[start]);
-        generateSubsets(result, temp, nums, start + 1);
-        temp.pop_back();
-        generateSubsets(result, temp, nums, start + 1);
+        currentSubset.push_back(nums[index]);
+        backtrack(nums, index + 1, result, currentSubset);
+        currentSubset.pop_back();
+        backtrack(nums, index + 1, result, currentSubset);
     }
     
     vector<vector<int>> subsets(vector<int>& nums) {
         vector<vector<int>> result;
-        vector<int> temp;
-        generateSubsets(result, temp, nums, 0);
+        vector<int> currentSubset;
+        backtrack(nums, 0, result, currentSubset);
         return result;
     }
 };

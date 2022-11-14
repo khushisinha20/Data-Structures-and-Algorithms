@@ -5,25 +5,28 @@ using namespace std;
 
 class Solution {
 public:
-    void generateCombinations(vector<vector<int>>& res, vector<int>& temp, vector<int>& candidates, int target, int start) {
-        if (start >= candidates.size()) {
-            if (target == 0)
-                res.push_back(temp);
+    void backtrack(vector<int>& candidates, int target, vector<int>& currentCombination, vector<vector<int>>& combinations, int index) {
+        if (index == candidates.size())
+            return;
+        
+        if (target < 0)
+            return;
+        
+        if (target == 0) {
+            combinations.push_back(currentCombination);
             return;
         }
         
-        if (candidates[start] <= target) {
-            temp.push_back(candidates[start]);
-            generateCombinations(res, temp, candidates, target - candidates[start], start);
-            temp.pop_back();
-        }
-        generateCombinations(res, temp, candidates, target, start + 1);
+        currentCombination.push_back(candidates[index]);
+        backtrack(candidates, target - candidates[index], currentCombination, combinations, index);
+        currentCombination.pop_back();
+        backtrack(candidates, target, currentCombination, combinations, index + 1);
     }
     
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-        vector<vector<int>> res;
-        vector<int> temp;
-        generateCombinations(res, temp, candidates, target, 0);
-        return res;
+        vector<vector<int>> combinations;
+        vector<int> currentCombination;
+        backtrack(candidates, target, currentCombination, combinations, 0);
+        return combinations;
     }
 };

@@ -5,29 +5,33 @@ using namespace std;
 
 class StockSpanner {
 public:
-    stack<pair<int, int>> s;
+    stack<pair<int, int>> stock;
     int index = -1;
+    int span = -1; 
+    
     StockSpanner() {
         
     }
     
     int next(int price) {
         ++index;
-        int res;
-        if (s.empty())
-            res = index + 1;
-        else if (!s.empty() && s.top().first > price)
-            res = index - s.top().second;
-        else if (!s.empty() && s.top().first <= price) {
-            while (!s.empty() && s.top().first <= price)
-                s.pop();
-            if (s.empty())
-                res = index + 1;
+        
+        if (stock.empty())
+            span = 1 + index;
+        
+        if (!stock.empty() && stock.top().first > price)
+            span = index - stock.top().second;
+        else {
+            while(!stock.empty() && stock.top().first <= price)
+                stock.pop();
+            if (stock.empty())
+                span = 1 + index;
             else
-                res = index - s.top().second;
+                span = index - stock.top().second;
         }
-        s.push({price, index});
-        return res;
+        
+        stock.push({price, index});
+        return span;
     }
 };
 

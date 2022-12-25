@@ -5,54 +5,54 @@ using namespace std;
 
 class Solution {
 public:
-    void nearestSmallestLeft(vector<int>& arr, vector<int>& heights) {
-        stack<pair<int, int>> s;
+    vector<int> nextSmallerToLeft(vector<int>& heights) {
+        vector<int> nsl(heights.size());
+        stack<pair<int, int>> previousHeights;
+        
         for (int i = 0; i < heights.size(); ++i) {
-            if (s.empty())
-                arr[i] = -1;
-            else if (!s.empty() && s.top().first < heights[i])
-                arr[i] = s.top().second;
-            else if (!s.empty() && s.top().first >= heights[i]) {
-                while (!s.empty() && s.top().first >= heights[i])
-                    s.pop();
-                if (s.empty())
-                    arr[i] = -1;
+            if (!previousHeights.empty() && previousHeights.top().first < heights[i])
+                nsl[i] = previousHeights.top().second;
+            else {
+                while (!previousHeights.empty() && previousHeights.top().first >= heights[i])
+                    previousHeights.pop();
+                if (previousHeights.empty())
+                    nsl[i] = -1;
                 else
-                    arr[i] = s.top().second;
+                    nsl[i] = previousHeights.top().second;
             }
-            s.push({heights[i], i});
+            previousHeights.push({heights[i], i});
         }
+        return nsl;
     }
-    
-    void nearestSmallestRight(vector<int>& arr, vector<int>& heights) {
-        stack<pair<int, int>> s;
+        
+    vector<int> nextSmallerToRight(vector<int>& heights) {
+        vector<int> nsr(heights.size());
+        stack<pair<int, int>> nextHeights;
+        
         for (int i = heights.size() - 1; i >= 0; --i) {
-            if (s.empty())
-                arr[i] = heights.size();
-            else if (!s.empty() && s.top().first < heights[i]) 
-                arr[i] = s.top().second;
-            else if (!s.empty() && s.top().first >= heights[i]) {
-                while (!s.empty() && s.top().first >= heights[i])
-                    s.pop();
-                if (s.empty())
-                    arr[i] = heights.size();
+            if (!nextHeights.empty() && nextHeights.top().first < heights[i])
+                nsr[i] = nextHeights.top().second;
+            else {
+                while (!nextHeights.empty() && nextHeights.top().first >= heights[i])
+                    nextHeights.pop();
+                if (nextHeights.empty())
+                    nsr[i] = heights.size();
                 else
-                    arr[i] = s.top().second;
+                    nsr[i] = nextHeights.top().second;
             }
-            s.push({heights[i], i});
+            nextHeights.push({heights[i], i});
         }
+        return nsr;
     }
     
     int largestRectangleArea(vector<int>& heights) {
-        vector<int> nearest_smallest_left(heights.size());
-        vector<int> nearest_smallest_right(heights.size());
-        nearestSmallestLeft(nearest_smallest_left, heights);
-        nearestSmallestRight(nearest_smallest_right, heights);
-        int largest_area = 0;
+        vector<int> nsl = nextSmallerToLeft(heights);
+        vector<int> nsr = nextSmallerToRight(heights);
+        int maxArea = 0;
         for (int i = 0; i < heights.size(); ++i) {
-            int width = nearest_smallest_right[i] - nearest_smallest_left[i] - 1;
-            largest_area = max(largest_area, width * heights[i]);
+            int width = nsr[i] - nsl[i] - 1;
+            maxArea = max(maxArea, width * heights[i]);
         }
-        return largest_area;
+        return maxArea;
     }
 };

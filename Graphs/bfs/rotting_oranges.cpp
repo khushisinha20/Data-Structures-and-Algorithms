@@ -5,56 +5,74 @@ using namespace std;
 
 class Solution {
 public:
-    void segregateOranges(vector<vector<int>>& grid, int& fresh_oranges, queue<pair<int, int>>& rotten_oranges) {
+    bool liesInsideGrid(int row, int col, vector<vector<int>>& grid) {
+        return row >= 0 && row < grid.size() && col >= 0 && col < grid[0].size();
+    } 
+    
+    bool isUnvisitedFreshNeighbourOrange(int row, int col, vector<vector<int>>& grid, vector<vector<bool>>& visited) {
+        return liesInsideGrid(row, col, grid) && grid[row][col] == 1 && !visited[row][col];
+    }
+    
+    void fillInitiallyRottenOranges(queue<pair<pair<int, int>, int>>& oranges, vector<vector<int>>& grid, vector<vector<bool>>& visited) {
         for (int row = 0; row < grid.size(); ++row) {
-            for (int col = 0; col < grid[0].size(); ++col) {
-                if (grid[row][col] == 1)
-                    ++fresh_oranges;
-                if (grid[row][col] == 2)
-                    rotten_oranges.push({row, col});
+            for (int col = 0; col < grid[row].size(); ++col) {
+                if (grid[row][col] == 2) {
+                    oranges.push({{row, col}, 0});
+                    visited[row][col] = true;
+                }
             }
         }
     }
     
-    void bfs(vector<vector<int>>& grid, int& fresh_oranges, queue<pair<int, int>>& rotten_oranges, int& min_time) {
-        while (!rotten_oranges.empty()) {
-            int size = rotten_oranges.size();
-            for (int i = 0; i < size; ++i) {
-                int row = rotten_oranges.front().first;
-                int col = rotten_oranges.front().second;
-               rotten_oranges.pop();
-               if (col < grid[0].size() - 1 && grid[row][col + 1] == 1) {
-                   grid[row][col + 1] = 2;
-                   rotten_oranges.push({row, col + 1});
-                   --fresh_oranges;
-               }
-               if (col > 0 && grid[row][col - 1] == 1) {
-                   grid[row][col - 1] = 2;
-                   rotten_oranges.push({row, col - 1});
-                   --fresh_oranges;
-               }
-               if (row < grid.size() - 1 && grid[row + 1][col] == 1) {
-                   grid[row + 1][col] = 2;
-                   rotten_oranges.push({row + 1, col});
-                   --fresh_oranges;
-               }
-               if (row > 0 && grid[row - 1][col] == 1) {
-                   grid[row - 1][col] = 2;
-                   rotten_oranges.push({row - 1, col});
-                   --fresh_oranges;
-               }
-           }
-           if (!rotten_oranges.empty())
-             ++min_time;
+    void bfs(vector<vector<int>>& grid, int& totalTime, vector<vector<bool>>& visited) {
+        queue<pair<pair<int, int>, int>> oranges;
+        fillInitiallyRottenOranges(oranges, grid, visited);
+        
+        while (!oranges.empty()) {
+            pair<int, int> currentOrange = oranges.front().first;
+            int currentTime = oranges.front().second;
+            int currentRow = currentOrange.first;
+            int currentCol = currentOrange.second;
+            oranges.pop();
+            
+            if (isUnvisitedFreshNeighbourOrange(currentRow - 1, currentCol, grid, visited)) {
+                oranges.push({{currentRow - 1, currentCol}, currentTime + 1});
+                visited[currentRow - 1][currentCol] = true;   
+            }
+            
+            if (isUnvisitedFreshNeighbourOrange(currentRow + 1, currentCol, grid, visited)) {
+                oranges.push({{currentRow + 1, currentCol}, currentTime + 1});
+                visited[currentRow + 1][currentCol] = true;
+            }
+            
+            if (isUnvisitedFreshNeighbourOrange(currentRow, currentCol - 1, grid, visited)) {
+                oranges.push({{currentRow, currentCol - 1}, currentTime + 1});
+                visited[currentRow][currentCol - 1] = true;   
+            }
+            
+            if (isUnvisitedFreshNeighbourOrange(currentRow, currentCol + 1, grid, visited)) {
+                oranges.push({{currentRow, currentCol + 1}, currentTime + 1});
+                visited[currentRow][currentCol + 1] = true;   
+            }
+            
+            totalTime = currentTime;
         }
     }
     
+    bool hasNoFreshOrange(vector<vector<int>>& grid, vector<vector<bool>>& visited) {
+        for (int row = 0; row < grid.size(); ++row) {
+            for (int col = 0; col < grid[row].size(); ++col) {
+                if (!visited[row][col] && grid[row][col] == 1)
+                    return false;
+            }
+        }
+        return true;
+    }
+    
     int orangesRotting(vector<vector<int>>& grid) {
-        int fresh_oranges = 0;
-        queue<pair<int, int>> rotten_oranges;
-        segregateOranges(grid, fresh_oranges, rotten_oranges);
-        int min_time = 0;
-        bfs(grid, fresh_oranges, rotten_oranges, min_time);
-        return fresh_oranges == 0 ? min_time : -1;
+        vector<vector<bool>> visited(grid.size(), vector<bool> (grid[0].size(), false));
+        int totalTime = 0;
+        bfs(grid, totalTime, visited);
+        return hasNoFreshOrange(grid, visited) ? totalTime: -1;
     }
 };

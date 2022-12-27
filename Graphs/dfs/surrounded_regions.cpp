@@ -5,45 +5,45 @@ using namespace std;
 
 class Solution {
 public:
-    vector<pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    vector<vector<int>> directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    
+    bool liesInsideBoard(vector<vector<char>>& board, int row, int col) {
+        return row >= 0 && row < board.size() && col >= 0 && col < board[0].size();
+    }
     
     void dfs(vector<vector<char>>& board, vector<vector<bool>>& visited, int row, int col) {
-        if (row < 0 || row >= board.size() || col < 0 || col >= board[0].size() || visited[row][col] || board[row][col] == 'X')
-            return;
-        
         visited[row][col] = true;
+        
         for (auto direction: directions) {
-            int neighbour_row = row + direction.first;
-            int neighbour_col = col + direction.second;
-            dfs(board, visited, neighbour_row, neighbour_col);
+            int adjacentRow = row + direction[0];
+            int adjacentCol = col + direction[1];
+            if (liesInsideBoard(board, adjacentRow, adjacentCol) && !visited[adjacentRow][adjacentCol] && board[adjacentRow][adjacentCol] == 'O') 
+                dfs(board, visited, adjacentRow, adjacentCol);
         }
     }
     
-    void traverseBorders(vector<vector<char>>& board, vector<vector<bool>>& visited) {
-        for (int col = 0; col < board[0].size(); ++col) {
-            if (!visited[0][col] && board[0][col] == 'O')
-                dfs(board, visited, 0, col);
-            if (!visited[board.size() - 1][col] && board[board.size() - 1][col] == 'O')
-                dfs(board, visited, board.size() - 1, col);
+    void traverseBorder(vector<vector<char>>& board, vector<vector<bool>>& visited) {
+        for (int i = 0; i < board.size(); ++i) {
+            for (int j = 0; j < board[i].size(); ++j) {
+                if (i == 0 || j == 0 || i == board.size() - 1 || j == board[0].size() - 1)
+                    if (board[i][j] == 'O')
+                        dfs(board, visited, i, j);
+            }
         }
-        
-        for (int row = 0; row < board.size(); ++row) {
-            if (!visited[row][0] && board[row][0] == 'O')
-                dfs(board, visited, row, 0);
-            if (!visited[row][board[0].size() - 1] && board[row][board[0].size() - 1] == 'O')
-                dfs(board, visited, row, board[0].size() - 1);
+    }
+    
+    void updateBoard(vector<vector<char>>& board, vector<vector<bool>>& visited) {
+        for (int i = 1; i < board.size() - 1; ++i) {
+            for (int j = 1; j < board[i].size() - 1; ++j) {
+                if (board[i][j] == 'O' && !visited[i][j])
+                    board[i][j] = 'X';
+            }
         }
     }
     
     void solve(vector<vector<char>>& board) {
         vector<vector<bool>> visited(board.size(), vector<bool> (board[0].size(), false));
-        traverseBorders(board, visited);
-        for (int row = 0; row < board.size(); ++row) {
-            for (int col = 0; col < board[0].size(); ++col) {
-                if (!visited[row][col] && board[row][col] == 'O') {
-                    board[row][col] = 'X';
-                }
-            }
-        }
+        traverseBorder(board, visited);
+        updateBoard(board, visited);
     }
 };

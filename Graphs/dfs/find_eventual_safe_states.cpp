@@ -1,5 +1,8 @@
 //leetcode.com/problems/find-eventual-safe-states/
 
+#include <bits/stdc++.h>
+using namespace std;
+
 class Solution {
 public:
     bool detectCycle(vector<vector<int>>& graph, vector<bool>& visitedNode, vector<bool>& visitedPath, vector<bool>& isPartOfCycle, int node) {

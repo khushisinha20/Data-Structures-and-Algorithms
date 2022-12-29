@@ -1,40 +1,45 @@
 //leetcode.com/problems/find-eventual-safe-states/
 
-#include <bits/stdc++.h>
-using namespace std;
-
 class Solution {
 public:
-    bool dfs(int vertex, vector<bool>& visitedNode, vector<bool>& visitedPath, vector<vector<int>>& graph) {
-        visitedNode[vertex] = true;
-        visitedPath[vertex] = true;
-        for (auto adjacentVertex: graph[vertex]) {
-            if (!visitedNode[adjacentVertex]) {
-                if (dfs(adjacentVertex, visitedNode, visitedPath, graph))
+    bool detectCycle(vector<vector<int>>& graph, vector<bool>& visitedNode, vector<bool>& visitedPath, vector<bool>& isPartOfCycle, int node) {
+        
+        visitedNode[node] = true;
+        visitedPath[node] = true;
+        isPartOfCycle[node] = true;
+        
+        for (auto adjacentNode: graph[node]) {
+            if (!visitedNode[adjacentNode]) {
+                if (detectCycle(graph, visitedNode, visitedPath, isPartOfCycle, adjacentNode)) 
                     return true;
-            } else if (visitedPath[adjacentVertex])
+            } else {
+                if (visitedPath[adjacentNode])
                     return true;
+            }
         }
-        visitedPath[vertex] = false;
+        
+        visitedPath[node] = false;
+        isPartOfCycle[node] = false;
         return false;
     }
     
-    void findSafeNodes(vector<bool>& visitedPath, vector<int>& safeNodes, int& total_vertices) {
-        for (int vertex = 0; vertex < total_vertices; ++vertex)
-            if (!visitedPath[vertex])
-                safeNodes.push_back(vertex);
+    void findSafeNodes(vector<bool>& isPartOfCycle, vector<int>& safeNodes) {
+        for (int node = 0; node < isPartOfCycle.size(); ++node)
+            if (!isPartOfCycle[node])
+                safeNodes.push_back(node);
     }
     
     vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
-        int total_vertices = graph.size();
+        vector<bool> visitedPath(graph.size(), false);
+        vector<bool> visitedNode(graph.size(), false);
+        vector<bool> isPartOfCycle(graph.size(), false);
         vector<int> safeNodes;
-        vector<bool> visitedNode(total_vertices, false);
-        vector<bool> visitedPath(total_vertices, false);
-        for (int vertex = 0; vertex < total_vertices; ++vertex) {
-            if (!visitedNode[vertex]) 
-                dfs(vertex, visitedNode, visitedPath, graph);
-        }
-        findSafeNodes(visitedPath, safeNodes, total_vertices);
+        
+        for (int node = 0; node < graph.size(); ++node)
+            if (!visitedNode[node])
+                detectCycle(graph, visitedNode, visitedPath, isPartOfCycle, node);
+        
+        findSafeNodes(isPartOfCycle, safeNodes);
         return safeNodes;
     }
 };

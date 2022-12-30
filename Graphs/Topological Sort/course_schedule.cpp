@@ -5,53 +5,48 @@ using namespace std;
 
 class Solution {
 public:
-    void createAdjacencyList(vector<vector<int>>& prerequisites, vector<vector<int>>& adjacencyList) {
-        for (auto prerequisite: prerequisites) 
+    void createAdjacencyList(vector<vector<int>>& adjacencyList, vector<vector<int>>& prerequisites) {
+        for (auto prerequisite: prerequisites)
             adjacencyList[prerequisite[1]].push_back(prerequisite[0]);
     }
     
-    void findIndegrees(vector<int>& indegrees, vector<vector<int>>& adjacencyList, int& numCourses) {
-        for (int edge = 0; edge < numCourses; ++edge) {
-            for (auto vertex: adjacencyList[edge]) {
-                ++indegrees[vertex];
+    void fillIndegrees(vector<int>& indegree, vector<vector<int>>& adjacencyList) {
+        for (int vertex = 0; vertex < indegree.size(); ++vertex) {
+            for (auto adjacentVertex: adjacencyList[vertex]) {
+                ++indegree[adjacentVertex];
             }
         }
     }
-    
-    void storeVerticesWithZeroIndegree(vector<int>& indegrees, queue<int>& zeroIndegreeVertices) {
-        for (int vertex = 0; vertex < indegrees.size(); ++vertex)
-            if (indegrees[vertex] == 0)
-                zeroIndegreeVertices.push(vertex);
+        
+    void storeZeroIndegreeNodes(vector<int>& indegree, queue<int>& zeroIndegreeNodes) {
+        for (int vertex = 0; vertex < indegree.size(); ++vertex)
+            if (indegree[vertex] == 0)
+                zeroIndegreeNodes.push(vertex);
     }
     
-    void bfs(vector<vector<int>>& adjacencyList, vector<int>& indegrees, vector<int>& topologicalSortedVertices, queue<int>& zeroIndegreeVertices) {
-        while (!zeroIndegreeVertices.empty()) {
-            int currentVertex = zeroIndegreeVertices.front();
-            zeroIndegreeVertices.pop();
-            topologicalSortedVertices.push_back(currentVertex);
+    void bfs(vector<vector<int>>& adjacencyList, queue<int>& zeroIndegreeNodes, vector<int>& indegree, int& countOfNodes) {
+        while (!zeroIndegreeNodes.empty()) {
+            int currentNode = zeroIndegreeNodes.front();
+            zeroIndegreeNodes.pop();
+            ++countOfNodes;
             
-            for (auto adjacentVertex: adjacencyList[currentVertex]) {
-                --indegrees[adjacentVertex];
-                if (indegrees[adjacentVertex] == 0)
-                    zeroIndegreeVertices.push(adjacentVertex);
+            for (auto adjacentNode: adjacencyList[currentNode]) {
+                --indegree[adjacentNode];
+                if (indegree[adjacentNode] == 0)
+                    zeroIndegreeNodes.push(adjacentNode);
             }
         }
-    }
-    
-    vector<int> topologicalSort(int& numCourses, vector<vector<int>>& adjacencyList) {
-        vector<int> indegrees(numCourses, 0);
-        findIndegrees(indegrees, adjacencyList, numCourses);
-        queue<int> zeroIndegreeVertices;
-        storeVerticesWithZeroIndegree(indegrees, zeroIndegreeVertices);
-        vector<int> topologicalSortedVertices;
-        bfs(adjacencyList, indegrees, topologicalSortedVertices, zeroIndegreeVertices);
-        return topologicalSortedVertices;
     }
     
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
         vector<vector<int>> adjacencyList(numCourses);
-        createAdjacencyList(prerequisites, adjacencyList);
-        vector<int> topologicalSortedVertices = topologicalSort(numCourses, adjacencyList);
-        return topologicalSortedVertices.size() == numCourses;
+        createAdjacencyList(adjacencyList, prerequisites);
+        vector<int> indegree(numCourses, 0);
+        fillIndegrees(indegree, adjacencyList);
+        queue<int> zeroIndegreeNodes;
+        storeZeroIndegreeNodes(indegree, zeroIndegreeNodes);
+        int countOfDoableCourses = 0;
+        bfs(adjacencyList, zeroIndegreeNodes, indegree, countOfDoableCourses);
+        return countOfDoableCourses == numCourses;
     }
 };

@@ -5,38 +5,48 @@ using namespace std;
 
 class Solution {
 public:
-    void fillFrequencies(vector<int>& barcodes, unordered_map<int, int>& frequency) {
-        for (int i = 0; i < barcodes.size(); ++i)
-            ++frequency[barcodes[i]];
+    void storeFrequencies(vector<int>& barcodes, unordered_map<int, int>& frequencies) {
+        for (auto barcode: barcodes)
+            ++frequencies[barcode];
     }
     
-    void fillHeap(unordered_map<int, int>& frequency, priority_queue<pair<int, int>>& max_heap) {
-        for (auto freq: frequency)
-            max_heap.push({freq.second, freq.first});
+    void storeFrequencyInHeap(unordered_map<int, int>& frequencies, priority_queue<pair<int, int>>& maxHeap) {
+        for (auto frequency: frequencies) {
+            maxHeap.push({frequency.second, frequency.first});
+        }
+    }
+    
+    void rearrange(priority_queue<pair<int, int>>& maxHeap, vector<int>& rearrangedBarcodes) {
+        while (maxHeap.size() > 1) {
+            int mostFrequent = maxHeap.top().second;
+            int highestFrequency = maxHeap.top().first;
+            maxHeap.pop();
+            int secondMostFrequent = maxHeap.top().second;
+            int secondHighestFrequency = maxHeap.top().first;
+            maxHeap.pop();
+            
+            rearrangedBarcodes.push_back(mostFrequent);
+            rearrangedBarcodes.push_back(secondMostFrequent);
+            --highestFrequency;
+            --secondHighestFrequency;
+            
+            if (highestFrequency > 0)
+                maxHeap.push({highestFrequency, mostFrequent});
+            if (secondHighestFrequency > 0)
+                maxHeap.push({secondHighestFrequency, secondMostFrequent});
+        }
+        
+        if (maxHeap.size() == 1)
+            rearrangedBarcodes.push_back(maxHeap.top().second);
     }
     
     vector<int> rearrangeBarcodes(vector<int>& barcodes) {
-        vector<int> rearranged_barcode;
-        unordered_map<int, int> frequency;
-        priority_queue<pair<int, int>> max_heap;
-        fillFrequencies(barcodes, frequency);
-        fillHeap(frequency, max_heap);
-        while (max_heap.size() > 1) {
-            auto most_frequent = max_heap.top();
-            max_heap.pop();
-            auto second_most_frequent = max_heap.top();
-            max_heap.pop();
-            rearranged_barcode.push_back(most_frequent.second);
-            --most_frequent.first;
-            rearranged_barcode.push_back(second_most_frequent.second);
-            --second_most_frequent.first;
-            if (most_frequent.first)
-                max_heap.push(most_frequent);
-            if (second_most_frequent.first)
-                max_heap.push(second_most_frequent);
-        }
-        if (max_heap.size() == 1)
-            rearranged_barcode.push_back(max_heap.top().second);
-        return rearranged_barcode;
+        unordered_map<int, int> frequencies;
+        storeFrequencies(barcodes, frequencies);
+        priority_queue<pair<int, int>> maxHeap;
+        storeFrequencyInHeap(frequencies, maxHeap);
+        vector<int> rearrangedBarcodes;
+        rearrange(maxHeap, rearrangedBarcodes);
+        return rearrangedBarcodes;
     }
 };

@@ -1,37 +1,35 @@
 //leetcode.com/problems/find-median-from-data-stream/
 
-#include <bits/stdc++.h>
-using namespace std;
-
 class MedianFinder {
 public:
-    priority_queue<double> max_heap;
-    priority_queue<double, vector<double>, greater<double>> min_heap;
+    priority_queue<double> maxHeap;
+    priority_queue<double, vector<double>, greater<double>> minHeap;
     
     MedianFinder() {
         
     }
     
     void addNum(int num) {
-        if (max_heap.empty() || max_heap.top() > num)
-            max_heap.push((double)num);
+        if (maxHeap.empty() || maxHeap.top() > num)
+            maxHeap.push((double)num);
         else
-            min_heap.push((double)num);
-        if (max_heap.size() > min_heap.size() + 1) {
-            min_heap.push(max_heap.top());
-            max_heap.pop();
-        } else if (min_heap.size() > max_heap.size() + 1) {
-            max_heap.push(min_heap.top());
-            min_heap.pop();
+            minHeap.push((double)num);
+        
+        if (maxHeap.size() > minHeap.size() + 1) {
+            minHeap.push(maxHeap.top());
+            maxHeap.pop();
+        } else if (minHeap.size() > maxHeap.size() + 1) {
+            maxHeap.push(minHeap.top());
+            minHeap.pop();
         }
     }
     
     double findMedian() {
-        if (max_heap.size() > min_heap.size())
-            return max_heap.top();
-        if (min_heap.size() > max_heap.size())
-            return min_heap.top();
-        return (min_heap.top() + max_heap.top()) / 2.0;
+        if (maxHeap.size() > minHeap.size())
+            return maxHeap.top();
+        if (minHeap.size() > maxHeap.size())
+            return minHeap.top();
+        return (minHeap.top() + maxHeap.top()) / 2;
     }
 };
 

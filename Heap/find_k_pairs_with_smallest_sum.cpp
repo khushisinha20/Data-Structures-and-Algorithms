@@ -5,39 +5,32 @@ using namespace std;
 
 class Solution {
 public:
-    struct comparator {
-        bool operator() (pair<int, int> a, pair<int, int> b) {
-            return a.first + a.second < b.first + b.second;
-        }
-    };
+    //O(k log k)
     
     vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
-        vector<vector<int>> res;
-        priority_queue<pair<int, int>, vector<pair<int, int>>, comparator> heap;
+        priority_queue<pair<int, vector<int>>> maxHeap;
+        
         for (int i = 0; i < nums1.size(); ++i) {
             for (int j = 0; j < nums2.size(); ++j) {
-                if (heap.size() < k) 
-                    heap.push({nums1[i], nums2[j]});
+                if (maxHeap.size() < k)
+                    maxHeap.push({nums1[i] + nums2[j], {nums1[i], nums2[j]}});
                 else {
-                    if (nums1[i] + nums2[j] < heap.top().first + heap.top().second) {
-                        heap.push({nums1[i], nums2[j]});
-                        heap.pop();
-                    } else
+                    if (nums1[i] + nums2[j] >= maxHeap.top().first)
                         break;
+                    else {
+                        maxHeap.pop();
+                        maxHeap.push({nums1[i] + nums2[j], {nums1[i], nums2[j]}});
+                    }
                 }
             }
         }
         
-        vector<int> temp;
+        vector<vector<int>> result;
         
-        while (!heap.empty()) {
-            temp.push_back(heap.top().first);
-            temp.push_back(heap.top().second);
-            res.push_back(temp);
-            heap.pop();
-            temp.clear();
+        while (!maxHeap.empty()) {
+            result.push_back(maxHeap.top().second);
+            maxHeap.pop();
         }
-        
-        return res;
+        return result;
     }
 };

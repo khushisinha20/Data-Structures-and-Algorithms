@@ -6,16 +6,19 @@ using namespace std;
 class Solution {
 public:
     double myPow(double x, int n) {
-        if (n < 0) 
-            x = (1 / x);
-        n = abs(n);
-        double product = 1;
-        while (n) {
-            if (n & 1)
-                product *= x;
-            x *= x;
-            n /= 2;
+        long long power = abs(n);
+        double ans = 1.0;
+        
+        while (power > 0) {
+            if (power & 1) {
+                ans *= x;
+                --power;
+            } else {
+                x *= x;
+                power /= 2;
+            }
         }
-        return product;
+        
+        return n >= 0 ? ans : 1.0 / ans;
     }
 };

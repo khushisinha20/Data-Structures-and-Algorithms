@@ -12,32 +12,23 @@ struct ListNode {
 class Solution {
 public:
     ListNode* removeNthFromEnd(ListNode* head, int n) {
-        if (head -> next == nullptr) {
-            delete head;
-            return nullptr;
+        ListNode* dummy = new ListNode();
+        dummy -> next = head;
+        
+        ListNode* current = dummy;
+        ListNode* nth = dummy;
+        
+        for (int i = 1; i <= n + 1; ++i)
+            current = current -> next;
+        
+        while (current) {
+            current = current -> next;
+            nth = nth -> next;
         }
         
-        ListNode* first = head;
-        ListNode* second = head;
-        ListNode* prev = head;
-        for (int i = 1; i < n; ++i)
-            first = first -> next;
-        
-        if (first -> next == nullptr) {
-            ListNode* temp = second -> next;
-            delete second;
-            return temp;
-        }
-        
-        while (first -> next != nullptr) {
-            if (second != head)
-                prev = prev -> next;
-            second = second -> next;
-            first = first -> next;
-        }
-        
-        prev -> next = second -> next;
-        delete second;
-        return head;
+        ListNode* nthFromLast = nth -> next;
+        nth -> next = nth -> next -> next;
+        delete nthFromLast;
+        return dummy -> next;
     }
 };

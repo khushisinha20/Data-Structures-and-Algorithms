@@ -14,17 +14,19 @@ struct ListNode {
 class Solution {
 public:
     ListNode* reverseList(ListNode* head) {
-        ListNode* prev_node = nullptr;
-        ListNode* curr_node = head;
-        ListNode* next_node = head;
+        if (!head || !head -> next)
+            return head;
         
-        while (curr_node != nullptr) {
-            next_node = curr_node -> next;
-            curr_node -> next = prev_node;
-            prev_node = curr_node;
-            curr_node = next_node;
+        ListNode* previous = nullptr;
+        ListNode* current = head;
+        
+        while (current) {
+            ListNode* next = current -> next; //next pointer required to keep track of the next node of the linked list
+            current -> next = previous;
+            previous = current;
+            current = next;
         }
         
-        return prev_node;
+        return previous;
     }
 };

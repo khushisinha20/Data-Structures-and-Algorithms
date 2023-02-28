@@ -6,15 +6,16 @@ using namespace std;
 class Solution {
 public:
     bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
-        int i = 0;
-        int j = 0;
-        for (auto val: pushed) {
-            pushed[i++] = val;
-            while (i > 0 && pushed[i - 1] == popped[j]) {
-                --i;
-                ++j;
+        //using pushed array as a stack
+        int top = 0;
+        int currentPopped = 0;
+        for (auto element: pushed) {
+            pushed[top++] = element;
+            while (top > 0 && pushed[top - 1] == popped[currentPopped]) {
+                --top;
+                ++currentPopped;
             }
         }
-        return i == 0;
+        return top == 0;
     }
 };

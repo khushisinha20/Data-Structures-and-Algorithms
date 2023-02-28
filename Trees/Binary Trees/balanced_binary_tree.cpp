@@ -14,25 +14,22 @@ struct TreeNode {
 
 class Solution {
 public:
-    int dfsHeight(TreeNode* root) {
-        if (!root)
-            return 0;
+    pair<bool, int> dfs(TreeNode* node) {
+        if (!node)
+            return {true, 0};
         
-        int left_height = dfsHeight(root -> left);
-        if (left_height == -1)
-            return -1;
+        auto left = dfs(node -> left);
+        auto right = dfs(node -> right);
         
-        int right_height = dfsHeight(root -> right);
-        if (right_height == -1)
-            return -1;
+        bool isBalanced = left.first and right.first and abs(left.second - right.second) <= 1;
         
-        if (abs(left_height - right_height) > 1)
-            return -1;
-        
-        return max(left_height, right_height) + 1;
-    } 
+        return {isBalanced, 1 + max(left.second, right.second)};
+    }
     
     bool isBalanced(TreeNode* root) {
-        return dfsHeight(root) != -1;
+        if (!root)
+            return true;
+        
+        return dfs(root).first;
     }
 };

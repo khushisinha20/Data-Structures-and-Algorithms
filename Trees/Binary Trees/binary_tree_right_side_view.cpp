@@ -14,25 +14,21 @@ struct TreeNode {
 
 class Solution {
 public:
+    void dfs(vector<int>& rightView, TreeNode* node, int level) {
+        if (!node)
+            return;
+        
+        if (level == rightView.size())
+            rightView.push_back(node -> val);
+        dfs(rightView, node -> right, level + 1);
+        dfs(rightView, node -> left, level + 1);
+    }
+    
     vector<int> rightSideView(TreeNode* root) {
-        queue<TreeNode*> q;
-        vector<int> res;
         if (!root)
-            return res;
-        q.push(root);
-        while (!q.empty()) {
-            int n = q.size();
-            for (int i = 0; i < n; ++i) {
-                TreeNode* node = q.front();
-                q.pop();
-                if (i == n - 1)
-                    res.push_back(node -> val);
-                if (node -> left)
-                    q.push(node -> left);
-                if (node -> right)
-                    q.push(node -> right);
-            }
-        }
-        return res;
+            return {};
+        vector<int> rightView;
+        dfs(rightView, root, 0);
+        return rightView;
     }
 };

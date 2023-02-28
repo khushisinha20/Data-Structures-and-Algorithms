@@ -15,36 +15,33 @@ struct TreeNode {
 class Solution {
 public:
     vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
-        vector<vector<int>> res;
         if (!root)
-            return res;
-        bool reverse = true;
-        deque<TreeNode*> q;
-        q.push_back(root);
-        while (!q.empty()) {
-            int n = q.size();
-            vector<int> level_nodes;
-            deque<TreeNode*> dq;
-            for (int i = 0; i < n; ++i) {
-                TreeNode* node = q.front();
-                level_nodes.push_back(node -> val);
-                q.pop_front();
-                if (reverse) {
-                    if (node -> left)
-                        dq.push_front(node -> left);
-                    if (node -> right)
-                        dq.push_front(node -> right);
-                } else {
-                    if (node -> right)
-                        dq.push_front(node -> right);
-                    if (node -> left)
-                        dq.push_front(node -> left);
-                }
+            return {};
+        
+        TreeNode* current = root;
+        queue<TreeNode*> nodes;
+        
+        nodes.push(current);
+        vector<vector<int>> result;
+        bool leftToRight = true;
+        
+        while (!nodes.empty()) {
+            int size = nodes.size();
+            vector<int> level(size);
+            for (int i = 0; i < size; ++i) {
+                TreeNode* currentNode = nodes.front();
+                nodes.pop();
+                int index = leftToRight ? i : size -i - 1;
+                level[index] = currentNode -> val;
+                
+                if (currentNode -> left)
+                    nodes.push(currentNode -> left);
+                if (currentNode -> right)
+                    nodes.push(currentNode -> right);
             }
-            q.insert(q.end(), dq.begin(), dq.end());
-            res.push_back(level_nodes);
-            reverse = !reverse;
+            leftToRight ^= 1;
+            result.push_back(level);
         }
-        return res;
+        return result;
     }
 };

@@ -5,36 +5,31 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> lookup;
-    const int MOD = 1000000007;
+    int MOD = 1000000007;
     
-    int calculateResult(int order) {
-        if (order < lookup.size())
-            return lookup[order];
-        
-        while (lookup.size() <= order) {
-            lookup.push_back((lookup.back() << 1 ) % MOD);
+    void fillPowers(vector<int>& powers) {
+        for (int i = 1; i < powers.size(); ++i) {
+            powers[i] = (powers[i - 1] * 2) % MOD;
         }
-        
-        return lookup.back();
     }
     
     int numSubseq(vector<int>& nums, int target) {
         sort(nums.begin(), nums.end());
         int start = 0;
         int end = nums.size() - 1;
-        int res = 0;
-        
-        lookup.push_back(1);
+        int result = 0;
+        vector<int> powers(nums.size(), 1);
+        fillPowers(powers);
         
         while (start <= end) {
             if (nums[start] + nums[end] > target)
                 --end;
             else {
-                res = (res + calculateResult(end - start)) % MOD;
+                result = (result + powers[end - start]) % MOD;
                 ++start;
             }
         }
-        return res;
+        
+        return result;
     }
 };

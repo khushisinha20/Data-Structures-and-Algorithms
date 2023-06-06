@@ -5,40 +5,47 @@ using namespace std;
 
 class Solution {
 	public:
-	void fillIndegree(vector<int> adj[], vector<int>& indegree, int& V) {
-	    for (int i = 0; i < V; ++i) {
-	        for (auto adjacentVertex: adj[i]) {
-	            ++indegree[adjacentVertex];
+	vector<int> getIndegree(int V, vector<int> adj[]) {
+	    vector<int> indegree(V, 0);
+	    for (int node = 0; node < V; ++node) {
+	        for (auto adjacentNode: adj[node]) {
+	            ++indegree[adjacentNode];
 	        }
 	    }
+	    
+	    return indegree;
 	}
 	
-	void storeNodesHavingZeroIndegree(queue<int>& zeroIndegreeNodes, vector<int>& indegree) {
-	    for (int vertex = 0; vertex < indegree.size(); ++vertex)
-	        if (indegree[vertex] == 0)
-	            zeroIndegreeNodes.push(vertex);
+	queue<int> getZeroIndegreeNodes(vector<int>& indegree) {
+	    queue<int> zeroIndegreeNodes;
+	    for (int node = 0; node < indegree.size(); ++node)
+	        if (indegree[node] == 0)
+	            zeroIndegreeNodes.push(node);
+	    return zeroIndegreeNodes;
 	}
 	
-	void bfs(queue<int>& zeroIndegreeNodes, vector<int>& indegree, vector<int> adj[], vector<int>& topologicalSortedNodes) {
+	vector<int> getTopologicallySortedNodes(queue<int>& zeroIndegreeNodes, vector<int>& indegree, vector<int> adj[]) {
+	    vector<int> result;
+	    
 	    while (!zeroIndegreeNodes.empty()) {
 	        int currentNode = zeroIndegreeNodes.front();
 	        zeroIndegreeNodes.pop();
-	        topologicalSortedNodes.push_back(currentNode);
-	        for (auto adjacentVertex: adj[currentNode]) {
-	            --indegree[adjacentVertex];
-	            if (indegree[adjacentVertex] == 0)
-	                zeroIndegreeNodes.push(adjacentVertex);
+	        
+	        result.push_back(currentNode);
+	        
+	        for (auto adjacentNode: adj[currentNode]) {
+	            --indegree[adjacentNode];
+	            if (indegree[adjacentNode] == 0)
+	                zeroIndegreeNodes.push(adjacentNode);
 	        }
 	    }
+	    
+	    return result;
 	}
 	
 	vector<int> topoSort(int V, vector<int> adj[]) {
-	    vector<int> indegree(V, 0);
-	    fillIndegree(adj, indegree, V);
-	    queue<int> zeroIndegreeNodes;
-	    storeNodesHavingZeroIndegree(zeroIndegreeNodes, indegree);
-	    vector<int> topologicalSortedNodes;
-	    bfs(zeroIndegreeNodes, indegree, adj, topologicalSortedNodes);
-	    return topologicalSortedNodes;
+	    vector<int> indegree = getIndegree(V, adj);
+	    queue<int> zeroIndegreeNodes = getZeroIndegreeNodes(indegree);
+	    return getTopologicallySortedNodes(zeroIndegreeNodes, indegree, adj);
 	}
 };

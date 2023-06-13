@@ -5,36 +5,38 @@ using namespace std;
 
 class TopVotedCandidate {
 public:
-    unordered_map<int, int> votes;
-    vector<pair<int, int>> vec;
+    vector<pair<int, int>> timeRecord;
+    unordered_map<int, int> voteCountRecord;
     
     TopVotedCandidate(vector<int>& persons, vector<int>& times) {
-        int max_votes = 0;
-        int person_with_max_votes = 0;
-        for (int i = 0; i < times.size(); ++i) {
-            ++votes[persons[i]];
-            if (votes[persons[i]] >= max_votes) {
-                max_votes = votes[persons[i]];
-                person_with_max_votes = persons[i];
+        int maxVotedPerson = -1;
+        int maxVotes = 0;
+        
+        for (int i = 0; i < persons.size(); ++i) {
+            ++voteCountRecord[persons[i]];
+            if (voteCountRecord[persons[i]] >= maxVotes) {
+                maxVotedPerson = persons[i];
+                maxVotes = voteCountRecord[persons[i]];
+                timeRecord.push_back({times[i], maxVotedPerson});
             }
-            vec.push_back({times[i], person_with_max_votes});
         }
     }
     
     int q(int t) {
         int low = 0;
-        int high = vec.size() - 1;
-        int res = 0;
+        int high = timeRecord.size() - 1;
+        int currentLeader = -1;
+        
         while (low <= high) {
             int mid = low + (high - low) / 2;
-            if (vec[mid].first <= t) {
-                res = vec[mid].second;
+            if (timeRecord[mid].first <= t) {
+                currentLeader = timeRecord[mid].second;
                 low = mid + 1;
-            } else {
+            } else
                 high = mid - 1;
-            }
         }
-        return res;
+        
+        return currentLeader;
     }
 };
 

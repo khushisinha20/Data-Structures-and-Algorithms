@@ -5,66 +5,43 @@ using namespace std;
 
 class LRUCache {
 public:
-    class ListNode {
-        public:
-        int key;
-        int val;
-        ListNode* prev;
-        ListNode* next;
-        ListNode(int key, int val) {
-            this -> key = key;
-            this -> val = val;
-        }
-    };
-    
-    ListNode* head = new ListNode(-1, -1);
-    ListNode* tail = new ListNode(-1, -1);
-    int cache_capacity;
-    unordered_map<int, ListNode*> mp;
+    list<int> dll;
+    map<int, pair<list<int> :: iterator, int>> cache;
+    int capacity;
     
     LRUCache(int capacity) {
-        head -> next = tail;
-        tail -> prev = head;
-        cache_capacity = capacity;
+        this -> capacity = capacity;
     }
     
-    void addToList(ListNode* node) {
-        ListNode* temp = head -> next; 
-        node -> next = temp;
-        node -> prev = head;
-        head -> next = node;
-        temp -> prev = node;
-    }
-    
-    void removeFromList(ListNode* node) {
-        ListNode* previous_node = node -> prev;
-        ListNode* next_node = node -> next;
-        previous_node -> next = next_node;
-        next_node -> prev = previous_node;
+    void makeMostRecentlyUsed(int key) {
+        dll.erase(cache[key].first);
+        dll.push_front(key);
+        cache[key].first = dll.begin();
     }
     
     int get(int key) {
-        if (mp.find(key) != mp.end()) {
-            removeFromList(mp[key]);
-            addToList(mp[key]);
-            return mp[key] -> val;
-        }
-        return -1;
+        if (cache.find(key) == cache.end())
+            return -1;
+        
+        makeMostRecentlyUsed(key);
+        return cache[key].second;
     }
     
     void put(int key, int value) {
-        if (mp.find(key) != mp.end()) {
-            removeFromList(mp[key]);
-            mp.erase(key);
+        if (cache.find(key) != cache.end()) {
+            cache[key].second = value;
+            makeMostRecentlyUsed(key);
+        } else {
+            dll.push_front(key);
+            cache[key] = {dll.begin(), value};
+            --capacity;
         }
-        if (mp.size() == cache_capacity) {
-            mp.erase(tail -> prev -> key);
-            removeFromList(tail -> prev);
-        }   
         
-        ListNode* node = new ListNode(key, value);
-        addToList(node);
-        mp[key] = head -> next;
+        if (capacity < 0) {
+            cache.erase(dll.back());
+            dll.pop_back();
+            ++capacity;
+        }
     }
 };
 

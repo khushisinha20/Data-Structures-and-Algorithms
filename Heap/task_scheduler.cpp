@@ -5,54 +5,42 @@ using namespace std;
 
 class Solution {
 public:
-    void storeFrequencies(vector<char>& tasks, unordered_map<char, int>& frequency) {
-        for (auto task: tasks)
+    unordered_map<char, int> getFrequency(vector<char>& tasks) {
+        unordered_map<char, int> frequency;
+        for (auto& task: tasks)
             ++frequency[task];
+        return frequency;
     }
     
-    void storeInHeap(unordered_map<char, int>& frequency, priority_queue<pair<int, char>>& maxFrequencyHeap) {
-        for (auto freq: frequency) {
-            maxFrequencyHeap.push({freq.second, freq.first});
-        }
+    priority_queue<int> getMaxHeap(unordered_map<char, int>& frequency) {
+        priority_queue<int> maxHeap;
+        for (auto& entry: frequency)
+            maxHeap.push(entry.second);
+        return maxHeap;
     }
     
     int leastInterval(vector<char>& tasks, int n) {
-        unordered_map<char, int> frequency;
-        storeFrequencies(tasks, frequency);
-        priority_queue<pair<int, char>> maxFrequencyHeap;
-        storeInHeap(frequency, maxFrequencyHeap);
-        queue<pair<int, char>> completedTasks;
-        int completionTime = 0;
-        int tasksProcessed = 0;
+        auto frequency = getFrequency(tasks);
+        auto maxHeap = getMaxHeap(frequency);
         
-        while (!maxFrequencyHeap.empty()) {
-            char currentTask = maxFrequencyHeap.top().second;
-            int currentTaskCount = maxFrequencyHeap.top().first;
-            maxFrequencyHeap.pop();
-            ++completionTime;
-            ++tasksProcessed;
-            completedTasks.push({currentTaskCount - 1, currentTask});
-            for (int i = 0; i < n; ++i) {
-                if (maxFrequencyHeap.empty()) {
-                    if (tasksProcessed == tasks.size())
-                        break;
-                    ++completionTime;
-                } else {
-                    currentTask = maxFrequencyHeap.top().second;
-                    currentTaskCount = maxFrequencyHeap.top().first;
-                    maxFrequencyHeap.pop();
-                    ++tasksProcessed;
-                    ++completionTime;
-                    completedTasks.push({currentTaskCount - 1, currentTask});
-                }
+        queue<vector<int>> processedTasks;
+        int time = 0;
+        
+        while (!maxHeap.empty() or !processedTasks.empty()) {
+            ++time;
+            if (!maxHeap.empty()) {
+                int maxFrequency = maxHeap.top();
+                maxHeap.pop();
+                --maxFrequency;
+                if (maxFrequency != 0)
+                    processedTasks.push({maxFrequency, time + n});
             }
-            while (!completedTasks.empty()) {
-                auto task = completedTasks.front();
-                completedTasks.pop();
-                if (task.first) 
-                    maxFrequencyHeap.push(task);   
-            }
+            if (!processedTasks.empty() and processedTasks.front()[1] == time) {
+                maxHeap.push(processedTasks.front()[0]);
+                processedTasks.pop();
+            }            
         }
-        return completionTime;
+        
+        return time;
     }
 };

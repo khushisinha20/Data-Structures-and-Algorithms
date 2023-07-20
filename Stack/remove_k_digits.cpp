@@ -5,42 +5,30 @@ using namespace std;
 
 class Solution {
 public:
-    void removeLeadingZeroes(string& res) {
-        while (res.back() == '0')
-            res.pop_back();
-        reverse(res.begin(), res.end());
-    }
-    
-    string smallestPossibleInteger(stack<int>& s) {
-        string res;
-        while (!s.empty()) {
-            res.push_back(s.top());
-            s.pop();
-        }
-        
-        removeLeadingZeroes(res);
-        
-        if (res.empty())
-            return "0";
-        
-        return res;
-    }
-    
     string removeKdigits(string num, int k) {
-        stack<int> s;
-        for (int i = 0; i < num.size(); ++i) {
-            while (!s.empty() && s.top() > num[i] && k) {
-                s.pop();
+        vector<char> digitStack;
+        
+        for (auto& currentDigit : num) {
+            while (!digitStack.empty() and k > 0 and digitStack.back() > currentDigit) {
+                digitStack.pop_back();
                 --k;
             }
-            s.push(num[i]);
+            
+            if (!digitStack.empty() or currentDigit != '0')
+                digitStack.push_back(currentDigit);
         }
         
-        while (k) {
-            s.pop();
-            --k;
-        }
+        while (k-- and !digitStack.empty())
+            digitStack.pop_back();
         
-        return smallestPossibleInteger(s);
+        string result;
+        
+        if (digitStack.empty())
+            return "0";
+        
+        for (auto& digit: digitStack)
+            result += digit;
+        
+        return result;
     }
 };

@@ -6,26 +6,35 @@ using namespace std;
 class Solution {
 public:
     vector<int> asteroidCollision(vector<int>& asteroids) {
-        stack<int> s;
-        for (int i = 0; i < asteroids.size(); ++i) {
-            if (asteroids[i] > 0 || s.empty()) 
-                s.push(asteroids[i]);
-            else {
-                while (!s.empty() && s.top() < abs(asteroids[i]) && s.top() > 0) 
-                    s.pop();
-                if (!s.empty() && s.top() == abs(asteroids[i])) 
-                    s.pop();
-                else {
-                    if (s.empty() || s.top() < 0)
-                        s.push(asteroids[i]);
+        stack<int> asteroidStack;
+        
+        for (auto& asteroid: asteroids) {
+            bool exploded = false;
+            
+            while (!asteroidStack.empty() and asteroid < 0 and asteroidStack.top() > 0) {
+                if (abs(asteroid) > asteroidStack.top())
+                    asteroidStack.pop();
+                else if (asteroidStack.top() == abs(asteroid)) {
+                    exploded = true;
+                    asteroidStack.pop();
+                    break;
+                } else {
+                    exploded = true;
+                    break;
                 }
             }
+            
+            if (!exploded)
+                asteroidStack.push(asteroid);
         }
-        vector<int> res(s.size());
-        for (int i = res.size() - 1; i >= 0; --i) {
-            res[i] = s.top();
-            s.pop();
+        
+        vector<int> result(asteroidStack.size());
+        
+        for (int i = result.size() - 1; i >= 0; --i) {
+            result[i] = asteroidStack.top();
+            asteroidStack.pop();
         }
-        return res;
+        
+        return result;
     }
 };

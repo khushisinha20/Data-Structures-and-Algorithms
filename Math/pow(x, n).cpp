@@ -5,20 +5,20 @@ using namespace std;
 
 class Solution {
 public:
+    double myPowUtil(double x, long n) {
+        if (n == 0)
+            return 1;
+        
+        if (n < 0)
+            return 1 / myPowUtil(x, -n);
+        
+        if (n % 2 == 0)
+            return myPowUtil(x * x, n / 2);
+        
+        return x * myPowUtil(x * x, (n - 1) / 2);
+    }
+    
     double myPow(double x, int n) {
-        long long power = abs(n);
-        double ans = 1.0;
-        
-        while (power > 0) {
-            if (power & 1) {
-                ans *= x;
-                --power;
-            } else {
-                x *= x;
-                power /= 2;
-            }
-        }
-        
-        return n >= 0 ? ans : 1.0 / ans;
+        return myPowUtil(x, (long)n);
     }
 };

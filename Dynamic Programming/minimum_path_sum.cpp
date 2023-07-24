@@ -26,3 +26,29 @@ public:
         return helper(0, 0, grid, dp);
     }
 };
+
+/*
+class Solution {
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+
+        for (int row = n - 1; row >= 0; --row) {
+            for (int col = m - 1; col >= 0; --col) {
+                if (row == n - 1 and col == m - 1)
+                    dp[row][col] = grid[row][col];
+                else {
+                    int down = (row + 1 < n) ? dp[row + 1][col] : INT_MAX;
+                    int right = (col + 1 < m) ? dp[row][col + 1] : INT_MAX;
+                    dp[row][col] = grid[row][col] + min(down, right);
+                }
+            }
+        }
+
+        return dp[0][0];
+    }
+};
+*/

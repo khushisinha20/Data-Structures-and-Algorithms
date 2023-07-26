@@ -8,38 +8,39 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int partition(vector<int>& a, int left, int right) {
-    int pivot = a[left];
-    int i = left - 1; 
-    int j = right + 1;
-    while (true) {
-        do {
-            ++i;
-        } while (a[i] < pivot);
-        do {
-            --j;
-        } while (a[j] > pivot);
-        if (i >= j)
-            return j;
-        swap(a[i], a[j]);    
+class Solution {
+public:
+    int partition(vector<int>& nums, int low, int high) {
+        int pivot = nums[low];
+        int i = low;
+        int j = high;
+
+        while (i < j) {
+            while (nums[i] <= pivot && i <= high - 1)
+                ++i;
+
+            while (nums[j] > pivot && j >= low + 1)
+                --j;
+
+            if (i < j)
+                swap(nums[i], nums[j]);
+        }
+        swap(nums[low], nums[j]);
+
+        return j;
     }
-}
 
-void quickSort(vector<int>& a, int left, int right) {
-    if (left >= right)
-        return;
-    int p = partition(a, left, right);
-    quickSort(a, left, p);
-    quickSort(a, p + 1, right);
-}
+    void quickSort(vector<int>& nums, int low, int high) {
+        if (low >= high) 
+            return;
 
-int main() {
-    int n;
-    cin >> n;
-    vector<int> a(n);
-    for (int i = 0; i < n; ++i)
-        cin >> a[i];
-    quickSort(a, 0, n - 1);
-    for (int i = 0; i < n; ++i)
-        cout << a[i] << " ";
-}
+        int partitionIndex = partition(nums, low, high);
+        quickSort(nums, low, partitionIndex - 1);
+        quickSort(nums, partitionIndex + 1, high);
+    }
+
+    vector<int> sortArray(vector<int>& nums) {
+        quickSort(nums, 0, nums.size() - 1);
+        return nums;
+    }
+};

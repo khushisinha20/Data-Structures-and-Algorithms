@@ -6,6 +6,9 @@
 
 //Stable
 
+#include <bits/stdc++.h>
+using namespace std;
+
 class Solution {
 public:
     void bubbleSort(int arr[], int n) {

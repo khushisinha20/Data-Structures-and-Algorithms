@@ -14,22 +14,28 @@ struct ListNode {
 class Solution {
 public:
     ListNode* deleteDuplicates(ListNode* head) {
-        ListNode* dummy = new ListNode(0, head);
-        ListNode* prev = dummy;
-        ListNode* curr = head;
-        while (curr != nullptr) {
-            if (curr -> next != nullptr && curr -> val == curr -> next -> val) {
-                while (curr -> next != nullptr && curr -> val == curr -> next -> val) {
-                    ListNode* temp = curr;
-                    curr = curr -> next;
-                    delete temp;
-                }
-                prev -> next = curr -> next;
-            } else {
-                prev = prev -> next;
+        if (!head or !head -> next)
+            return head;
+        
+        ListNode* dummy = new ListNode(-1, head);
+        ListNode* previous_unique = dummy;
+        ListNode* current = head;
+        
+        while (current) {
+            bool isDuplicate = false;
+            while (current -> next and current -> val == current -> next -> val) {
+                isDuplicate = true;
+                current = current -> next;
             }
-            curr = curr -> next;
+            
+            if (isDuplicate) 
+                previous_unique -> next = current -> next;
+            else
+                previous_unique = previous_unique -> next;
+            
+            current = current -> next;
         }
+        
         return dummy -> next;
     }
 };

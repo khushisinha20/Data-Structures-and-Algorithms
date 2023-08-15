@@ -14,28 +14,28 @@ struct ListNode {
 class Solution {
 public:
     ListNode* partition(ListNode* head, int x) {
-        if (head == nullptr || head -> next == nullptr)
-            return head;
+        ListNode* dummyForLess = new ListNode();
+        ListNode* dummyForMore = new ListNode();
+        ListNode* tailForLess = dummyForLess;
+        ListNode* less = dummyForLess;
+        ListNode* more = dummyForMore;
+        ListNode* current = head;
         
-        ListNode* lesser_head = new ListNode(-1);
-        ListNode* greater_head = new ListNode(-1);
-        ListNode* lesser = lesser_head;
-        ListNode* greater = greater_head;
-        
-        while (head) {
-            if (head -> val < x) {
-                lesser -> next = head;
-                lesser = lesser -> next;
+        while (current) {
+            if (current -> val < x) {
+                less -> next = current;
+                tailForLess = current;
+                less = less -> next;
             } else {
-                greater -> next = head;
-                greater = greater -> next;
+                more -> next = current;
+                more = more -> next;
             }
-            head = head -> next;
+            current = current -> next;
         }
         
-        greater -> next = nullptr;
-        lesser -> next = greater_head -> next;
-        delete greater_head;
-        return lesser_head -> next;
+        more -> next = nullptr;
+        tailForLess -> next = dummyForMore -> next;
+        delete dummyForMore;
+        return dummyForLess -> next;
     }
 };

@@ -14,14 +14,16 @@ struct ListNode {
 class Solution {
 public:
     bool hasCycle(ListNode *head) {
-        ListNode* slow = head;
-        ListNode* fast = head;
-        while (fast != nullptr && fast -> next != nullptr) {
-            fast = fast -> next -> next;
-            slow = slow -> next;
-            if (fast == slow)
+        ListNode* hare = head;
+        ListNode* tortoise = head;
+        
+        while (hare and hare -> next) {
+            hare = hare -> next -> next;
+            tortoise = tortoise -> next;
+            if (hare == tortoise)
                 return true;
         }
+        
         return false;
     }
 };

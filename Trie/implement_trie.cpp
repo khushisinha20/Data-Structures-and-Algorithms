@@ -1,74 +1,73 @@
 //leetcode.com/problems/implement-trie-prefix-tree/
-
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Node {
-    Node* links[26];
-    bool flag = false;
+class TrieNode {
+    unordered_map<char, TrieNode*> children;
+    bool isEndOfWord;
     
-    bool containsKey(char c) {
-        return links[c - 'a'] != NULL;
+public:
+    TrieNode() {
+        isEndOfWord = false;
     }
     
-    void put(char c, Node* node) {
-        links[c - 'a'] = node;
+    bool containsKey(char letter) {
+        return children.find(letter) != children.end();
     }
     
-    Node* get(char c) {
-        return links[c - 'a'];
+    TrieNode* get(char letter) {
+        return children.at(letter);
+    }
+    
+    void put(char letter, TrieNode* node) {
+        children[letter] = node;
     }
     
     void setEnd() {
-        flag = true;
+        isEndOfWord = true;
     }
     
     bool isEnd() {
-        return flag;
+        return isEndOfWord;
     }
 };
 
 class Trie {
-private:    
-    Node* root;
 public:
+    TrieNode* root = new TrieNode();
+    
     Trie() {
-        root = new Node();
+        
     }
     
     void insert(string word) {
-        Node* node = root;
-        
-        for (int i = 0; i < word.length(); ++i) {
-            if (!node -> containsKey(word[i]))
-                node -> put(word[i], new Node());
-            node = node -> get(word[i]);
+        TrieNode* node = root;
+        for (char& letter: word) {
+            if (!node -> containsKey(letter)) {
+                node -> put(letter, new TrieNode());
+            }
+            node = node -> get(letter);
         }
-        
         node -> setEnd();
     }
     
     bool search(string word) {
-        Node* node = root;
-        
-        for (int i = 0; i < word.length(); ++i) {
-            if (!node -> containsKey(word[i]))
+        TrieNode* node = root;
+        for (char& letter: word) {
+            if (!node -> containsKey(letter))
                 return false;
-            node = node -> get(word[i]);
+            node = node -> get(letter);
         }
-        
         return node -> isEnd();
     }
     
     bool startsWith(string prefix) {
-        Node* node = root;
-        
-        for (int i = 0; i < prefix.length(); ++i) {
-            if (!node -> containsKey(prefix[i]))
+        TrieNode* node = root;
+        for (char& letter: prefix) {
+            if (!node -> containsKey(letter))
                 return false;
-            node = node -> get(prefix[i]);
+            node = node -> get(letter);
         }
-        
         return true;
     }
 };
